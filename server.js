@@ -3,6 +3,7 @@ import colors from 'colors';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDb from './config/db';
+import morgan from 'morgan';
 
 const app = express();
 dotenv.config();
@@ -14,7 +15,7 @@ app.use(
 	})
 );
 app.post('/api/register', () => {
-	console.log('register', req.body);
+	console.log('register end', req.body);
 });
 
 const PORT = process.env.PORT || 8000;
