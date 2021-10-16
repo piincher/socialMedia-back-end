@@ -3,7 +3,7 @@ import colors from 'colors';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDb from './config/db';
-import morgan from 'morgan';
+import { readdirSync } from 'fs';
 
 const app = express();
 dotenv.config();
@@ -14,9 +14,8 @@ app.use(
 		origin: 'http://localhost:3000'
 	})
 );
-app.post('/api/register', () => {
-	console.log('register end', req.body);
-});
+//autoload route
+readdirSync('./routes').map((r) => app.use('/api', require(`./routes/${r}`)));
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
