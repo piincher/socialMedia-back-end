@@ -1,4 +1,5 @@
 import User from '../models/user';
+import jwt from 'jsonwebtoken';
 import { hashPassword, comparePassword } from '../helpers/auth';
 const register = async (req, res) => {
 	//console.log('register end', req.body);
@@ -14,7 +15,7 @@ const register = async (req, res) => {
 	const user = new User({ name, email, password: hashedPassword, secret });
 	try {
 		await user.save();
-		console.log('register user', user);
+		//console.log('register user', user);
 		return res.json({
 			ok: true
 		});
@@ -23,4 +24,25 @@ const register = async (req, res) => {
 		res.status(400).send('error try again');
 	}
 };
-export { register };
+
+const login = async (req, res) => {
+	try {
+		const { email, password } = req.body;
+		const user = await User.findOne({ email });
+		if (!user) return res.status(400).send('email and password incorrect');
+		const match = await comparePassword(password, user.password);
+		if (!match) return res.status(400).send('email and password wrong');
+
+		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+		user.password = undefined;
+		user.secret = undefined;
+		res.status(200).json({
+			token,
+			user
+		});
+	} catch (error) {
+		console.log(error);
+		res.status(400).send('try again ');
+	}
+};
+export { register, login };
