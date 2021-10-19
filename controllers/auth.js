@@ -1,5 +1,6 @@
 import User from '../models/user';
 import jwt from 'jsonwebtoken';
+import expertJwt from 'express-jwt';
 import { hashPassword, comparePassword } from '../helpers/auth';
 const register = async (req, res) => {
 	//console.log('register end', req.body);
@@ -46,5 +47,13 @@ const login = async (req, res) => {
 	}
 };
 
-const currentUser = async (req, res) => {};
+const currentUser = async (req, res) => {
+	try {
+		const user = await User.findById(req.user._id);
+		res.json({ ok: true });
+	} catch (error) {
+		console.log(error);
+		res.status(400).send('error not authorize');
+	}
+};
 export { register, login, currentUser };
