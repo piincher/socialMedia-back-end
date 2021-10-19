@@ -45,4 +45,6 @@ const login = async (req, res) => {
 		res.status(400).send('try again ');
 	}
 };
-export { register, login };
+
+const currentUser = async (req, res) => {};
+export { register, login, currentUser };
