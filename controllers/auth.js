@@ -34,7 +34,7 @@ const login = async (req, res) => {
 		const match = await comparePassword(password, user.password);
 		if (!match) return res.status(400).send('email and password wrong');
 
-		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1200' });
 		user.password = undefined;
 		user.secret = undefined;
 		res.status(200).json({
