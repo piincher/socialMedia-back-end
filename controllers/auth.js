@@ -34,7 +34,7 @@ const login = async (req, res) => {
 		const match = await comparePassword(password, user.password);
 		if (!match) return res.status(400).send('email and password wrong');
 
-		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '1200' });
+		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 		user.password = undefined;
 		user.secret = undefined;
 		res.status(200).json({
@@ -56,4 +56,26 @@ const currentUser = async (req, res) => {
 		res.status(400).send('error not authorize');
 	}
 };
-export { register, login, currentUser };
+
+const forgotPassword = async (req, res) => {
+	try {
+		const { email, password, secret } = req.body;
+		if (!email || !password < 7) {
+			return res.status(400).send('the new password should be greater than 6 password');
+		}
+		if (!secret) res.json({ error: 'secret is required' });
+
+		const user = await User.findOne({ email, secret });
+
+		if (!user) res.json({ error: 'we cant verify the information ' });
+
+		const hashed = await hashPassword(password);
+		await User.findByIdAndUpdate(user._id, { password: hashed });
+		res.json({
+			success: 'congrats!! now you can login with your new password '
+		});
+	} catch (error) {
+		res.status(400).send('something went wrong try again');
+	}
+};
+export { register, login, currentUser, forgotPassword };
