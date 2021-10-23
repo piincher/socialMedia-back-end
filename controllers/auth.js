@@ -72,7 +72,7 @@ const currentUser = async (req, res) => {
 const forgotPassword = async (req, res) => {
 	try {
 		const { email, password, secret } = req.body;
-		if (!email || !password < 7) {
+		if (!email || password < 7) {
 			return res.json({ error: 'the new password should be greater than 7' });
 		}
 		if (!secret) res.json({ error: 'secret is required' });
