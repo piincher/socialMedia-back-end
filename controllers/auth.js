@@ -6,12 +6,20 @@ const register = async (req, res) => {
 	//console.log('register end', req.body);
 	const { name, email, password, secret } = req.body;
 	//validation
-	if (!name) return res.status(400).send('name is required');
-	if (!password || password.length < 6)
-		return res.status(400).send('Password is required and should be 6 character long');
-	if (!secret) return res.status(400).send('answer  is required');
+	if (!name) {
+		return res.json({
+			error: 'name should be provide'
+		});
+	}
+	if (!password || password.length < 6) {
+		return res.json({ error: 'word is required and should be 6 character long' });
+	}
+	if (!secret) return res.json({ error: 'secret should be provide' });
 	const exist = await User.findOne({ email });
-	if (exist) return res.status(400).send('email is taken');
+	if (exist) {
+		return res.json({ error: 'email is taken ' });
+	}
+
 	const hashedPassword = await hashPassword(password);
 	const user = new User({ name, email, password: hashedPassword, secret });
 	try {
@@ -30,9 +38,13 @@ const login = async (req, res) => {
 	try {
 		const { email, password } = req.body;
 		const user = await User.findOne({ email });
-		if (!user) return res.status(400).send('email and password incorrect');
+		if (!user) {
+			return res.json({ error: 'email and password incorrect' });
+		}
 		const match = await comparePassword(password, user.password);
-		if (!match) return res.status(400).send('email and password wrong');
+		if (!match) {
+			return res.json({ error: 'email and password incorrect' });
+		}
 
 		const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 		user.password = undefined;
@@ -61,7 +73,7 @@ const forgotPassword = async (req, res) => {
 	try {
 		const { email, password, secret } = req.body;
 		if (!email || !password < 7) {
-			return res.status(400).send('the new password should be greater than 6 password');
+			return res.json({ error: 'the new password should be greater than 7' });
 		}
 		if (!secret) res.json({ error: 'secret is required' });
 
