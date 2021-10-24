@@ -7,13 +7,13 @@ cloudinary.config({
 	api_secret: process.env.CLOUDINARY_SECRET
 });
 const createPost = async (req, res) => {
-	const { content } = req.body;
+	const { content, image } = req.body;
 	if (!content.length) {
 		return res.json({ error: 'content should be provide' });
 	}
 
 	try {
-		const post = new Post({ content, postedBy: req.user._id });
+		const post = new Post({ content, image, postedBy: req.user._id });
 		post.save();
 		res.json(post);
 	} catch (error) {
