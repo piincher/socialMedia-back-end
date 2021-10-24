@@ -14,4 +14,8 @@ const createPost = async (req, res) => {
 		res.sendStatus(400);
 	}
 };
-export { createPost };
+
+const uploadImage = async (req, res) => {
+	console.log(req.files);
+};
+export { createPost, uploadImage };
