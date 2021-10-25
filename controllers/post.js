@@ -28,7 +28,7 @@ const uploadImage = async (req, res) => {
 	try {
 		const result = await cloudinary.uploader.upload(req.files.image.path);
 
-		console.log('upload image ', result);
+		//console.log('upload image ', result);
 
 		res.json({
 			url: result.secure_url,
@@ -39,4 +39,13 @@ const uploadImage = async (req, res) => {
 		res.sendStatus(400);
 	}
 };
-export { createPost, uploadImage };
+
+const postByUser = async (req, res) => {
+	try {
+		const posts = await Post.find({ postedBy: req.user._id })
+			.populate('postedBy _id name image ')
+			.limit(10)
+			.sort({ createdAt: -1 });
+	} catch (error) {}
+};
+export { createPost, uploadImage, postByUser };
