@@ -42,7 +42,9 @@ const uploadImage = async (req, res) => {
 
 const postByUser = async (req, res) => {
 	try {
-		const posts = await Post.find({ postedBy: req.user._id })
+		const posts = await Post.find()
+			//Post.find({ postedBy: req.user._id })
+
 			.populate('postedBy', '_id name image ')
 			.sort({ createdAt: -1 })
 			.limit(10);
