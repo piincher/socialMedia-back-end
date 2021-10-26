@@ -52,4 +52,15 @@ const postByUser = async (req, res) => {
 		res.json(posts);
 	} catch (error) {}
 };
-export { createPost, uploadImage, postByUser };
+
+const userPost = async (req, res) => {
+	try {
+		const post = await Post.findById(req.params._id);
+
+		res.json(post);
+	} catch (error) {
+		console.log(error);
+		res.sendStatus('try again');
+	}
+};
+export { createPost, uploadImage, postByUser, userPost };
