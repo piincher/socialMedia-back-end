@@ -63,4 +63,13 @@ const userPost = async (req, res) => {
 		res.sendStatus('try again');
 	}
 };
-export { createPost, uploadImage, postByUser, userPost };
+const updatePost = async (req, res) => {
+	try {
+		const post = await Post.findByIdAndUpdate(req.params._id, req.body, {
+			new: true
+		});
+
+		res.json(post);
+	} catch (error) {}
+};
+export { createPost, uploadImage, postByUser, userPost, updatePost };
