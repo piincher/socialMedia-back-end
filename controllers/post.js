@@ -72,4 +72,19 @@ const updatePost = async (req, res) => {
 		res.json(post);
 	} catch (error) {}
 };
-export { createPost, uploadImage, postByUser, userPost, updatePost };
+
+const deletePost = async (req, res) => {
+	try {
+		const post = await Post.findOneAndDelete(req.params._id);
+		//remove the image from cloudinary
+		if (post.image && post.image.public_id) {
+			const image = await cloudinary.uploader.destroy(post.image.public_id);
+		}
+		res.json({ ok: true });
+	} catch (error) {
+		console.log(error);
+
+		res.sendStatus('try again');
+	}
+};
+export { createPost, uploadImage, postByUser, userPost, updatePost, deletePost };
