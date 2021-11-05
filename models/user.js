@@ -23,6 +23,11 @@ const userSchema = new Schema(
 			type: String,
 			required: true
 		},
+		username:{
+			type:String,
+			unique:true,
+			required:true
+		},
 		about: {},
 		photo: String,
 		following: [ { type: Schema.ObjectId, ref: 'User' } ],

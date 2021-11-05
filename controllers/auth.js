@@ -1,7 +1,7 @@
 import User from '../models/user';
 import jwt from 'jsonwebtoken';
-import expertJwt from 'express-jwt';
 import { hashPassword, comparePassword } from '../helpers/auth';
+import {nanoid} from 'nanoid'
 const register = async (req, res) => {
 	//console.log('register end', req.body);
 	const { name, email, password, secret } = req.body;
@@ -21,7 +21,7 @@ const register = async (req, res) => {
 	}
 
 	const hashedPassword = await hashPassword(password);
-	const user = new User({ name, email, password: hashedPassword, secret });
+	const user = new User({ name, email, password: hashedPassword, secret ,username:nanoid(5)});
 	try {
 		await user.save();
 		//console.log('register user', user);
