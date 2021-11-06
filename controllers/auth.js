@@ -112,6 +112,10 @@ const profileUpdate = async (req,res) => {
 		if (req.body.secret) {
 			data.name = req.body.secret
 		}
+
+		if (req.body.image) {
+			data.image = req.body.image
+		}
 		let user = await User.findByIdAndUpdate(req.user._id, data, { new: true })
 		user.password = undefined
 		user.secret = undefined
