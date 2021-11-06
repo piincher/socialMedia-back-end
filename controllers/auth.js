@@ -90,4 +90,38 @@ const forgotPassword = async (req, res) => {
 		res.status(400).send('something went wrong try again');
 	}
 };
-export { register, login, currentUser, forgotPassword };
+const profileUpdate = async (req,res) => {
+	try {
+		//console.log('profile update',req.body)
+		const data = {}
+		if (req.body.username) {
+			data.username = req.body.username
+		}
+		if (req.body.about) {
+			data.about = req.body.about
+		}
+		if (req.body.name) {
+			data.name = req.body.name
+		}
+		if (req.body.password && req.body.password < 7) {
+			return res.json({error:'choose a long password'})
+		}
+		else {
+			data.password = await hashPassword(req.body.password)
+		}
+		if (req.body.secret) {
+			data.name = req.body.secret
+		}
+		let user = await User.findByIdAndUpdate(req.user._id, data, { new: true })
+		user.password = undefined
+		user.secret = undefined
+		res.json(user)
+	} catch (error) {
+		if (error.code == 11000) {
+			return res.json({error:'duplicate value'})
+		}
+		console.log(error)
+
+	}
+}
+export { register, login, currentUser, forgotPassword,profileUpdate };
