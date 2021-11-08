@@ -1,7 +1,7 @@
 import User from '../models/user';
 import jwt from 'jsonwebtoken';
 import { hashPassword, comparePassword } from '../helpers/auth';
-import {nanoid} from 'nanoid'
+import { nanoid } from 'nanoid';
 const register = async (req, res) => {
 	//console.log('register end', req.body);
 	const { name, email, password, secret } = req.body;
@@ -21,7 +21,7 @@ const register = async (req, res) => {
 	}
 
 	const hashedPassword = await hashPassword(password);
-	const user = new User({ name, email, password: hashedPassword, secret ,username:nanoid(5)});
+	const user = new User({ name, email, password: hashedPassword, secret, username: nanoid(5) });
 	try {
 		await user.save();
 		//console.log('register user', user);
@@ -90,42 +90,53 @@ const forgotPassword = async (req, res) => {
 		res.status(400).send('something went wrong try again');
 	}
 };
-const profileUpdate = async (req,res) => {
+const profileUpdate = async (req, res) => {
 	try {
 		//console.log('profile update',req.body)
-		const data = {}
+		const data = {};
 		if (req.body.username) {
-			data.username = req.body.username
+			data.username = req.body.username;
 		}
 		if (req.body.about) {
-			data.about = req.body.about
+			data.about = req.body.about;
 		}
 		if (req.body.name) {
-			data.name = req.body.name
+			data.name = req.body.name;
 		}
 		if (req.body.password && req.body.password < 7) {
-			return res.json({error:'choose a long password'})
-		}
-		else {
-			data.password = await hashPassword(req.body.password)
+			return res.json({ error: 'choose a long password' });
+		} else {
+			data.password = await hashPassword(req.body.password);
 		}
 		if (req.body.secret) {
-			data.name = req.body.secret
+			data.name = req.body.secret;
 		}
 
 		if (req.body.image) {
-			data.image = req.body.image
+			data.image = req.body.image;
 		}
-		let user = await User.findByIdAndUpdate(req.user._id, data, { new: true })
-		user.password = undefined
-		user.secret = undefined
-		res.json(user)
+		let user = await User.findByIdAndUpdate(req.user._id, data, { new: true });
+		user.password = undefined;
+		user.secret = undefined;
+		res.json(user);
 	} catch (error) {
 		if (error.code == 11000) {
-			return res.json({error:'duplicate value'})
+			return res.json({ error: 'duplicate value' });
 		}
-		console.log(error)
-
+		console.log(error);
 	}
-}
-export { register, login, currentUser, forgotPassword,profileUpdate };
+};
+
+const findPeople = async (req, res) => {
+	try {
+		const user = User.findById(req.user._id);
+		let following = user.following;
+		following.push(user._id);
+		const people = await User.find({ _id: { $nin: following } }).limit(10);
+		res.json(people);
+		//user.follwing
+	} catch (error) {
+		console.log(error);
+	}
+};
+export { register, login, currentUser, forgotPassword, profileUpdate, findPeople };
